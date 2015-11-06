@@ -1,10 +1,25 @@
 import subprocess
 import os
+import re
 
 PROJECT_NAME = 'saltmarsh'
 
 def run(command):
-    return subprocess.check_output(command, universal_newlines=True)
+    try:
+        return subprocess.check_output(command, universal_newlines=True)
+    except subprocess.CalledProcessError as err:
+        return err.output
+
+def run_remote(boxname, command):
+    if not isinstance(command, str):
+        command = ' '.join(command)
+    return run(['vagrant','ssh', boxname, '--command', "{}".format(command)])
+
+def run_frodo(command):
+    return run_remote('frodo', command)
+
+def run_samwise(command):
+    return run_remote('samwise', command)
 
 
 def check_tests_run_from_base_dir():
@@ -51,9 +66,22 @@ def test_vagrantfile_exists():
     assert os.path.exists('Vagrantfile'), \
         "You must create a vagrantfile at {}".format(os.path.abspath('Vagrantfile'))
 
-def test_single_box_running():
+def test_single_box_not_running():
+    global_status = run(['vagrant', 'global-status'])
+    assert 'default virtualbox' not in global_status, "the single box created in step 1 is still runnning. remove it with the `vagrant destroy` command."
+
+def test_double_boxes_running():
     check_tests_run_from_base_dir()
     global_status = run(['vagrant', 'global-status'])
+    assert "samwise virtualbox running {}".format(os.getcwd()) in global_status
+    assert "frodo   virtualbox running {}".format(os.getcwd()) in global_status
+    assert os.path.exists('frodo_vagrant')
+    assert os.path.exists('samwise_vagrant')
 
-def test_file_created_through_synced_folders():
-    assert os.path.exists('synced-folder'), "Log in to the vagrant box and create a directory named 'synced-folder within /vagrant"
+def test_hostmanager_installed():
+    plugins = run(['vagrant', 'plugin', 'list'])
+    assert 'vagrant-hostmanager' in plugins
+
+def test_samwise_can_ping_frodo():
+    assert 'unknown host' not in run_samwise('ping -c 1 frodo'), \
+        "samwise cannot ping frodo"
