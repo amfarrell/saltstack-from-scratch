@@ -66,31 +66,17 @@ def test_vagrantfile_exists():
     assert os.path.exists('Vagrantfile'), \
         "You must create a vagrantfile at {}".format(os.path.abspath('Vagrantfile'))
 
-def test_single_box_not_running():
-    global_status = run(['vagrant', 'global-status'])
-    assert 'default virtualbox' not in global_status, "the single box created in step 1 is still runnning. remove it with the `vagrant destroy` command."
-
 def test_double_boxes_running():
     check_tests_run_from_base_dir()
     global_status = run(['vagrant', 'global-status'])
-    assert "samwise virtualbox running {}".format(os.getcwd()) in global_status
-    assert "frodo   virtualbox running {}".format(os.getcwd()) in global_status
+    frodo_running = re.compile("[0-9a-fA-F]{7}\s*frodo\s*virtualbox\s*running\s"+"{}".format(os.getcwd()))
+    samwise_running = re.compile("[0-9a-fA-F]{7}\s*samwise\s*virtualbox\s*running\s"+"{}".format(os.getcwd()))
+    assert frodo_running.search(global_status)
+    assert samwise_running.search(global_status)
 
 def test_hostmanager_installed():
     plugins = run(['vagrant', 'plugin', 'list'])
     assert 'vagrant-hostmanager' in plugins
-
-def test_salt_installed_running_on_frodo():
-    assert 'saltstack' in run_frodo('grep saltstack /etc/apt/sources.list /etc/apt/sources.list.d/*'), \
-        "You must add the saltstack ppa to frodo"
-    assert 'ok installed' in run_frodo('dpkg -s salt-minion | grep Status'), \
-        "You must install the salt-minion service on frodo"
-    assert 'ok installed' in run_frodo('dpkg -s salt-master | grep Status'), \
-        "You must install the salt-master service on frodo"
-    assert 'salt-minion start/running' in run_frodo('sudo service salt-minion status'), \
-        "The salt-minion is not running on frodo."
-    assert 'salt-master start/running' in run_frodo('sudo service salt-master status'), \
-        "The salt-master is not running on frodo."
 
 def test_salt_installed_running_on_samwise():
     assert 'saltstack' in run_samwise('grep saltstack /etc/apt/sources.list /etc/apt/sources.list.d/*'), \
@@ -135,8 +121,7 @@ def test_frodo_accepted_minions():
         "The salt-master on frodo does not know that the salt-minion on frodo is up"
 
 def test_log_files_copied():
-    assert os.path.exists('./frodo-minion-log'), \
+    assert os.path.exists('samwise_vagrant/samwise-minion-log'), \
         "use `salt '*' cmd.run` to copy /var/log/salt/minion into /vagrant on both frodo and samwise."
-    assert os.path.exists('./samwise-minion-log'), \
+    assert os.path.exists('frodo_vagrant/frodo-minion-log'), \
         "use `salt '*' cmd.run` to copy /var/log/salt/minion into /vagrant on both frodo and samwise."
-
