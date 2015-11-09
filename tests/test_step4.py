@@ -1,6 +1,7 @@
 import subprocess
 import os
 import re
+import yaml
 
 PROJECT_NAME = 'saltmarsh'
 
@@ -135,3 +136,12 @@ def test_salt_states_in_vagrant():
         "You must set the file_roots:\nbase: to '/vagrant/salt' in /etc/salt/master."
     assert os.path.exists('frodo_vagrant/salt/ag.sls'), \
         "You must put an sls file named ag.sls for silversearcher-ag in {}".format(os.path.abspath('./salt/ag.sls'))
+
+def test_sls_written():
+    with open('frodo_vagrant/salt/ag.sls') as f:
+        data = yaml.load(f)
+        correct_data = {'install-silversearcher': {'pkg.installed': [{'name': 'silversearcher-ag'}]}}
+        assert data == correct_data, \
+            "The data in ag.sls must match \n{}. It is currently\n{}".format(
+                    yaml.dump(correct_data), yaml.dump(data)
+            )
