@@ -2,26 +2,9 @@ import subprocess
 import os
 import re
 import yaml
+from test_utils import run, run_frodo, run_samwise
 
 PROJECT_NAME = 'saltmarsh'
-
-def run(command):
-    try:
-        return subprocess.check_output(command, universal_newlines=True)
-    except subprocess.CalledProcessError as err:
-        return err.output
-
-def run_remote(boxname, command):
-    if not isinstance(command, str):
-        command = ' '.join(command)
-    return run(['vagrant','ssh', boxname, '--command', "{}".format(command)])
-
-def run_frodo(command):
-    return run_remote('frodo', command)
-
-def run_samwise(command):
-    return run_remote('samwise', command)
-
 
 def check_tests_run_from_base_dir():
     wd = os.getcwd()
