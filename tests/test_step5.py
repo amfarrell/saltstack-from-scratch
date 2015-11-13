@@ -2,7 +2,7 @@ import subprocess
 import os
 import re
 import yaml
-from test_utils import run, run_frodo, run_samwise
+from tests.test_utils import run, run_frodo, run_samwise
 
 PROJECT_NAME = 'saltmarsh'
 
