@@ -1,1 +1,1 @@
-py.test -v --tb=line
+py.test -v --tb=line tests/
