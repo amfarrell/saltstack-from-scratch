@@ -20,3 +20,17 @@ create-virtualenv:
   - require:
     - pkg: install-virtualenv
     - git: clone-example-app
+
+gunicorn-upstart-file:
+  file.managed:
+  - name: /etc/init/django-example.conf
+  - source:
+    - salt://django-example.conf
+    - user: root
+    - group: root
+    - mode: '0644'
+
+gunicorn-running:
+  service.running:
+  - name: django-example
+

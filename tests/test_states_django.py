@@ -30,3 +30,8 @@ class TestSamwiseRepoCloned(SaltStateTestCase):
         assert self.debian_package_installed('git')
         assert os.path.exists('samwise_vagrant/django-example/manage.py'), \
             "The app's git repository has not been cloned."
+
+    def test_gunicorn(self):
+        run_samwise('sudo rm -f /etc/init/django-example.conf')
+        state_response_data = self.run_state(state_file='django', state_id='gunicorn-upstart-file', target='samwise')
+        assert 'django' in run_samwise('sudo ls /etc/init/django-example.conf')
