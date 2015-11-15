@@ -2,6 +2,7 @@ from test_utils import run_frodo, run_samwise, SaltStateTestCase
 import shutil
 import os.path
 import unittest
+import requests
 import yaml
 
 class TestSamwiseRepoCloned(SaltStateTestCase):
@@ -30,3 +31,17 @@ class TestSamwiseRepoCloned(SaltStateTestCase):
         assert self.debian_package_installed('git')
         assert os.path.exists('samwise_vagrant/django-example/manage.py'), \
             "The app's git repository has not been cloned."
+
+    def test_gunicorn(self):
+        run_samwise('sudo service django-example stop')
+        run_samwise('sudo rm -f /etc/init/django-example.conf')
+        state_response_data = self.run_state(state_file='django', target='samwise')
+        # You can run individual states and their dependencies from a file
+        # using `salt '*' state.sls_id gunicorn-upstart-file django`. But, one
+        # word of warning, this will break if you try to run a state such as
+        # git.latest and git is not already installed.
+        assert 'django-example.conf' in run_samwise('sudo ls /etc/init/django-example.conf')
+        assert 'syntax ok' in run_samwise('sudo init-checkconf /etc/init/django-example.conf')
+        assert 'django-example.log' in run_samwise('sudo ls /var/log/upstart/django-example.log')
+        assert 'django-example start/running' in run_samwise('sudo service django-example status')
+        assert 'Django' in requests.get('http://0.0.0.0:8082').text
