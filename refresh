@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+
+from tests.test_utils import run, run_samwise, run_frodo
+import re
+import os
+import shutil
+
+def save_vagrant_dirs():
+    for vagrant_dir in ('frodo_vagrant', 'samwise_vagrant'):
+        backup = '{}.bak'.format(vagrant_dir)
+        if os.path.exists(vagrant_dir):
+            if os.path.exists(backup):
+                shutil.rmtree(backup)
+            shutil.move(vagrant_dir, backup)
+        run(['git', 'checkout', vagrant_dir])
+
+def destroy_vms():
+    global_status = run(['vagrant','global-status'])
+
+    regexes = {
+        'frodo': re.compile("([0-9a-fA-F]{7})\s*frodo\s*virtualbox\s*running\s"+"{}".format(os.getcwd())),
+        'samwise': re.compile("([0-9a-fA-F]{7})\s*samwise\s*virtualbox\s*running\s"+"{}".format(os.getcwd())),
+    }
+    ids = []
+    for hostname, regex in regexes.items():
+        match = regex.search(global_status)
+        if match:
+            for group in match.groups():
+                ids.append(group)
+
+    if ids:
+        print(' '.join(['vagrant', 'destroy', '-f'] + ids))
+        print(run(['vagrant', 'destroy', '-f'] + ids))
+
+def configure_salt():
+    run_frodo('cat /vagrant/install-salt.sh | sudo bash >> /vagrant/install.log')
+    run_samwise('cat /vagrant/install-salt.sh | sudo bash >> /vagrant/install.log')
+    run_frodo('sudo salt-key --accept samwise -y')
+    run_frodo('sudo salt-key --accept frodo -y')
+    print(run_frodo('sudo salt-key -L'))
+    print(run_frodo("sudo salt 'samwise' state.single pkg.installed name='silversearcher-ag'"))
+
+def main():
+    destroy_vms()
+    save_vagrant_dirs()
+
+    print(run(['vagrant', 'up']))
+
+    configure_salt()
+
+
+if __name__ == '__main__':
+    main()
+    print(run(['py.test', '-v', '--tb=line', 'tests/']))
