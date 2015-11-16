@@ -37,7 +37,7 @@ class SaltStateTestCase(unittest.TestCase):
                 continue
             for state_id, results in state_results.items():
                 if results['result'] is not True:
-                    failures.append((minion, state_id, yaml.results))
+                    failures.append((minion, state_id, results))
         if tracebacks:
             message = "The following minions had tracebacks:\n"
             for traceback in tracebacks:
@@ -47,5 +47,6 @@ class SaltStateTestCase(unittest.TestCase):
             message = "The following salt states failed:\n"
             for failure in failures:
                 message += "On {}, the state {} failed with\n {}\n".format(*failure)
+                print(failure[2]['comment'])
             raise AssertionError(message)
         return response_data
