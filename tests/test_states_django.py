@@ -5,7 +5,7 @@ import unittest
 import requests
 import yaml
 
-class TestSamwiseRepoCloned(SaltStateTestCase):
+class TestSamwiseDjangoExample(SaltStateTestCase):
 
     def debian_package_installed(self, packagename):
         return not 'no packages found matching {}'.format(packagename) in \
