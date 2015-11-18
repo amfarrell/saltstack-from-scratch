@@ -49,3 +49,27 @@ class TestSamwiseDjangoExample(SaltStateTestCase):
         assert 'django-example.log' in run_samwise('sudo ls /var/log/upstart/django-example.log')
         assert 'django-example start/running' in run_samwise('sudo service django-example status')
         assert 'Django' in requests.get('http://0.0.0.0:8082').text
+
+    def test_nginx_running(self):
+        if self.debian_package_installed('nginx'):
+            run_samwise('sudo apt-get remove nginx --purge')
+        state_response_data = self.run_state(state_file = 'nginx', target='samwise')
+        assert 'master process' in run_samwise('sudo ps aux | grep nginx')
+
+    def test_nginx_restarts_on_conf_change(self):
+        self.run_state(state_file = 'nginx', target='samwise')
+        run_frodo("echo '  ' >> /vagrant/salt/nginx-default.conf")
+        state_response_data = self.run_state(state_file = 'nginx', target='samwise')
+        assert 'restarted' in state_response_data['samwise']['service_|-nginx-running_|-nginx_|-running']['comment']
+        run_frodo("sed -i '$ d' /vagrant/salt/nginx-default.conf")
+
+    def test_nginx_proxying_port_8080(self):
+        if self.debian_package_installed('nginx'):
+            run_samwise('sudo apt-get remove nginx --purge')
+        state_response_data = self.run_state(state_file = 'django', target='samwise')
+        state_response_data = self.run_state(state_file = 'nginx', target='samwise')
+        assert '8080' in run_samwise('cat /etc/nginx/sites-enabled/default')
+        assert 'Django' in requests.get('http://0.0.0.0:8002').text
+        #TODO
+        pass
+
