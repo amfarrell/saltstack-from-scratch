@@ -17,3 +17,4 @@ nginx-conf-file:
   file.managed:
   - name: /etc/nginx/sites-enabled/default
   - source: salt://nginx-default.conf
+  - template: jinja
