@@ -128,3 +128,6 @@ def test_sls_written():
             "The data in ag.sls must match \n{}. It is currently\n{}".format(
                     yaml.dump(correct_data), yaml.dump(data)
             )
+
+def test_aws_plugin_installed():
+    assert 'aws' in run(['vagrant', 'plugin', 'list'])

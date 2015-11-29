@@ -1,34 +1,20 @@
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/trusty64"
-  config.vm.box_url = "ubuntu/trusty64"
+  config.vm.box = "dummy"
 
-  config.vm.define :frodo , primary: true do |machine|
-    machine.vm.provider :virtualbox do |v|
-      v.name = "frodo"
-    end
+  config.vm.provider :aws do |aws, override|
+    aws.region = "us-west-2"
+    aws.instance_type = "m3.medium"
+    aws.access_key_id = ENV['AWS_KEY_ID']
+    aws.secret_access_key = ENV['AWS_KEY_SECRET']
+    #aws.session_token = "SESSION TOKEN"
+    aws.keypair_name = "salt-demo"
+    aws.ami = "ami-534d5d32"
+    aws.security_groups = ["default", "vagrant"]
+    aws.tags = {
+        'created_from'=> 'Vagrant'
+    }
 
-    machine.vm.hostname = "frodo"
-    machine.vm.synced_folder "./frodo_vagrant", "/vagrant", :create => true
-
-    machine.vm.network :private_network, ip: "10.10.10.100"
-    machine.vm.network :forwarded_port, guest: 80, host: 8001
-    machine.vm.network :forwarded_port, guest: 8080, host: 8081
-    machine.vm.provision :hostmanager
+    override.ssh.username = "ubuntu"
+    override.ssh.private_key_path = "/Users/afarrell/projects/saltmarsh/salt-demo.pem"
   end
-
-  config.vm.define :samwise do |machine|
-    machine.vm.provider :virtualbox do |v|
-      v.name = "samwise"
-    end
-
-    machine.vm.hostname = "samwise"
-    machine.vm.synced_folder "./samwise_vagrant", "/vagrant", :create => true
-
-    machine.vm.network :private_network, ip: "10.10.10.101"
-    machine.vm.network :forwarded_port, guest: 80, host: 8002
-    machine.vm.network :forwarded_port, guest: 8080, host: 8082
-    machine.vm.provision :hostmanager
-  end
-
-  config.vm.provision :hostmanager
 end
