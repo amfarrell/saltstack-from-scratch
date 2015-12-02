@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-from tests.test_utils import run, run_samwise, run_frodo
+from tests.test_utils import run, run_galahad, run_arthur
 import re
 import os
 import shutil
 
 def save_vagrant_dirs():
-    for vagrant_dir in ('frodo_vagrant', 'samwise_vagrant'):
+    for vagrant_dir in ('arthur_vagrant', 'galahad_vagrant'):
         backup = '{}.bak'.format(vagrant_dir)
         if os.path.exists(vagrant_dir):
             if os.path.exists(backup):
@@ -18,8 +18,8 @@ def destroy_vms():
     global_status = run(['vagrant','global-status'])
 
     regexes = {
-        'frodo': re.compile("([0-9a-fA-F]{7})\s*frodo\s*virtualbox\s*running\s"+"{}".format(os.getcwd())),
-        'samwise': re.compile("([0-9a-fA-F]{7})\s*samwise\s*virtualbox\s*running\s"+"{}".format(os.getcwd())),
+        'arthur': re.compile("([0-9a-fA-F]{7})\s*arthur\s*virtualbox\s*running\s"+"{}".format(os.getcwd())),
+        'galahad': re.compile("([0-9a-fA-F]{7})\s*galahad\s*virtualbox\s*running\s"+"{}".format(os.getcwd())),
     }
     ids = []
     for hostname, regex in regexes.items():
@@ -33,12 +33,12 @@ def destroy_vms():
         print(run(['vagrant', 'destroy', '-f'] + ids))
 
 def configure_salt():
-    run_frodo('cat /vagrant/install-salt.sh | sudo bash >> /vagrant/install.log')
-    run_samwise('cat /vagrant/install-salt.sh | sudo bash >> /vagrant/install.log')
-    run_frodo('sudo salt-key --accept samwise -y')
-    run_frodo('sudo salt-key --accept frodo -y')
-    print(run_frodo('sudo salt-key -L'))
-    print(run_frodo("sudo salt 'samwise' state.single pkg.installed name='silversearcher-ag'"))
+    run_arthur('cat /vagrant/install-salt.sh | sudo bash >> /vagrant/install.log')
+    run_galahad('cat /vagrant/install-salt.sh | sudo bash >> /vagrant/install.log')
+    run_arthur('sudo salt-key --accept galahad -y')
+    run_arthur('sudo salt-key --accept arthur -y')
+    print(run_arthur('sudo salt-key -L'))
+    print(run_arthur("sudo salt 'galahad' state.single pkg.installed name='silversearcher-ag'"))
 
 def main():
     destroy_vms()
