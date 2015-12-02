@@ -15,6 +15,6 @@ Vagrant.configure("2") do |config|
     }
 
     override.ssh.username = "ubuntu"
-    override.ssh.private_key_path = "/Users/afarrell/projects/saltmarsh/salt-demo.pem"
+    override.ssh.private_key_path = ENV["EC2_PEM_PATH"]
   end
 end
