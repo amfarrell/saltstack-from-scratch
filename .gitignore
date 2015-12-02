@@ -6,3 +6,5 @@ samwise_vagrant/install.log
 samwise_vagrant/example-venv
 samwise_vagrant/django-example
 frodo_vagrant/install.log
+*.pem
+*nocommit.sh
