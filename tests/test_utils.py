@@ -13,21 +13,24 @@ def run_remote(boxname, command):
         command = ' '.join(command)
     return run(['vagrant','ssh', boxname, '--command', "{}".format(command)])
 
-def run_frodo(command):
-    return run_remote('frodo', command)
+def run_arthur(command):
+    return run_remote('arthur', command)
 
-def run_samwise(command):
-    return run_remote('samwise', command)
+def run_galahad(command):
+    return run_remote('galahad', command)
 
 class SaltStateTestCase(unittest.TestCase):
     def run_state(self, state_file, target='*', state_id=None):
         if state_id:
-            response = run_frodo("sudo salt '{}' state.sls_id {} {} --output=yaml".format(target, state_id, state_file))
+            command = "sudo salt '{}' state.sls_id {} {} --output=yaml".format(target, state_id, state_file)
         else:
-            response = run_frodo("sudo salt '{}' state.sls {} --output=yaml".format(target, state_file))
+            command = "sudo salt '{}' state.sls {} --output=yaml".format(target, state_file)
+        response = run_arthur(command)
         response_data = yaml.load(response)
         tracebacks = []
         failures = []
+        if isinstance(response_data, str):
+            raise AssertionError("The result of running {} was\n{}.".format(command, response_data))
         for minion, state_results in response_data.items():
             if isinstance(state_results, str):
                 tracebacks.append((minion, state_results))
