@@ -1,6 +1,7 @@
 base:
   '*':
     - ag
-  'samwise':
+  'sir_galahad':
+    - match: grain
     - django
     - nginx
