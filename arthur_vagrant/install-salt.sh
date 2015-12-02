@@ -8,5 +8,5 @@ cat /etc/salt/master.bak | sed '413s/^#\ \ \ \ -\ \/srv\/salt/    - \/vagrant\/s
     sudo sed '411s/^#//' > /etc/salt/master
 service salt-master restart
 cp /etc/salt/minion /etc/salt/minion.bak
-cat /etc/salt/minion.bak | sudo sed 's/^#master:\ salt/master: frodo/' > /etc/salt/minion
+cat /etc/salt/minion.bak | sudo sed 's/^#master:\ salt/master: arthur/' > /etc/salt/minion
 service salt-minion restart
