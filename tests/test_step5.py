@@ -2,11 +2,11 @@ import subprocess
 import os
 import re
 import yaml
-from tests.test_utils import run, run_frodo, run_samwise
+from test_utils import run, run_arthur, run_galahad
 
 PROJECT_NAME = 'saltmarsh'
 
-def check_tests_run_from_base_dir():
+def check_tests_from_base_dir():
     wd = os.getcwd()
     if os.path.basename(wd) == PROJECT_NAME:
         return True
@@ -51,77 +51,77 @@ def test_vagrantfile_exists():
         "You must create a vagrantfile at {}".format(os.path.abspath('Vagrantfile'))
 
 def test_double_boxes_running():
-    check_tests_run_from_base_dir()
+    check_tests_from_base_dir()
     global_status = run(['vagrant', 'global-status'])
-    frodo_running = re.compile("[0-9a-fA-F]{7}\s*frodo\s*virtualbox\s*running\s"+"{}".format(os.getcwd()))
-    samwise_running = re.compile("[0-9a-fA-F]{7}\s*samwise\s*virtualbox\s*running\s"+"{}".format(os.getcwd()))
-    assert frodo_running.search(global_status)
-    assert samwise_running.search(global_status)
+    arthur_running = re.compile("[0-9a-fA-F]{7}\s*arthur\s*virtualbox\s*running\s"+"{}".format(os.getcwd()))
+    galahad_running = re.compile("[0-9a-fA-F]{7}\s*galahad\s*virtualbox\s*running\s"+"{}".format(os.getcwd()))
+    assert arthur_running.search(global_status)
+    assert galahad_running.search(global_status)
 
 def test_hostmanager_installed():
     plugins = run(['vagrant', 'plugin', 'list'])
     assert 'vagrant-hostmanager' in plugins
 
-def test_salt_installed_running_on_samwise():
-    assert 'saltstack' in run_samwise('grep saltstack /etc/apt/sources.list /etc/apt/sources.list.d/*'), \
-        "You must add the saltstack ppa to samwise"
-    assert 'ok installed' in run_samwise('dpkg -s salt-minion | grep Status'), \
-        "You must install the salt-minion service on samwise"
-    assert 'salt-minion start/running' in run_samwise('sudo service salt-minion status'), \
-        "The salt-minion is not running on samwise."
+def test_salt_installed_running_on_galahad():
+    assert 'saltstack' in run_galahad('grep saltstack /etc/apt/sources.list /etc/apt/sources.list.d/*'), \
+        "You must add the saltstack ppa to galahad"
+    assert 'ok installed' in run_galahad('dpkg -s salt-minion | grep Status'), \
+        "You must install the salt-minion service on galahad"
+    assert 'salt-minion start/running' in run_galahad('sudo service salt-minion status'), \
+        "The salt-minion is not running on galahad."
 
 
-def test_samwise_can_ping_frodo():
-    assert 'unknown host' not in run_samwise('ping -c 1 frodo'), \
-        "samwise cannot ping frodo"
+def test_galahad_can_ping_arthur():
+    assert 'unknown host' not in run_galahad('ping -c 1 arthur'), \
+        "galahad cannot ping arthur"
 
-def test_frodo_accepted_minions():
-    keys = run_frodo('sudo salt-key -L')
+def test_arthur_accepted_minions():
+    keys = run_arthur('sudo salt-key -L')
     accepted = keys.split('Denied Keys:')[0].split('Accepted Keys')[1]
     unaccepted = keys.split('Rejected Keys:')[0].split('Unaccepted Keys')[1]
-    up_minions = run_frodo('sudo salt-run manage.status').split('up:')[1]
-    if 'samwise' not in accepted:
-        if 'samwise' not in unaccepted:
-            if 'master: frodo' not in run_samwise("grep 'master: frodo' /etc/salt/minion"):
-                raise AssertionError("salt-minion on samwise is not configured to point to look for salt-master on the same machine")
+    up_minions = run_arthur('sudo salt-run manage.status').split('up:')[1]
+    if 'galahad' not in accepted:
+        if 'galahad' not in unaccepted:
+            if 'master: arthur' not in run_galahad("grep 'master: arthur' /etc/salt/minion"):
+                raise AssertionError("salt-minion on galahad is not configured to point to look for salt-master on the same machine")
             else:
-                raise AssertionError("salt-minion on samwise needs a `service salt-minions restart`")
+                raise AssertionError("salt-minion on galahad needs a `service salt-minions restart`")
         else:
-            raise AssertionError("salt-master on frodo needs to accept the key from salt-minon on samwise")
-    assert 'samwise' in up_minions, \
-        "The salt-master on frodo does not know that the salt-minion on samwise is up"
+            raise AssertionError("salt-master on arthur needs to accept the key from salt-minon on galahad")
+    assert 'galahad' in up_minions, \
+        "The salt-master on arthur does not know that the salt-minion on galahad is up"
 
-    assert 'master: frodo' in run_frodo("grep 'master: frodo' /etc/salt/minion"), \
-        "salt-minion on frodo is not configured to point to look for salt-master on the same machine"
-    if 'frodo' not in accepted:
-        if 'frodo' not in unaccepted:
-            if 'master: frodo' not in run_frodo("grep 'master: frodo' /etc/salt/minion"):
-                raise AssertionError("salt-minion on frodo is not configured to point to look for salt-master on the same machine")
+    assert 'master: arthur' in run_arthur("grep 'master: arthur' /etc/salt/minion"), \
+        "salt-minion on arthur is not configured to point to look for salt-master on the same machine"
+    if 'arthur' not in accepted:
+        if 'arthur' not in unaccepted:
+            if 'master: arthur' not in run_arthur("grep 'master: arthur' /etc/salt/minion"):
+                raise AssertionError("salt-minion on arthur is not configured to point to look for salt-master on the same machine")
             else:
-                raise AssertionError("salt-minion on frodo needs a `service salt-minions restart`")
+                raise AssertionError("salt-minion on arthur needs a `service salt-minions restart`")
         else:
-            raise AssertionError("salt-master on frodo needs to accept the key from salt-minon on frodo")
-    assert 'frodo' in up_minions, \
-        "The salt-master on frodo does not know that the salt-minion on frodo is up"
+            raise AssertionError("salt-master on arthur needs to accept the key from salt-minon on arthur")
+    assert 'arthur' in up_minions, \
+        "The salt-master on arthur does not know that the salt-minion on arthur is up"
 
-def test_samwise_loglevel_set():
-    assert "info" in run_samwise('grep ^log_level_logfile /etc/salt/minion'), \
-        "You must set log_level_logfile to 'info' in /etc/salt/minion on samwise"
-    assert 'INFO' in run_samwise("sudo grep '\[INFO *\]' /var/log/salt/minion"), \
-        "You must reset the salt-minion on samwise after setting the value of log_level_logfile"
+def test_galahad_loglevel_set():
+    assert "info" in run_galahad('grep ^log_level_logfile /etc/salt/minion'), \
+        "You must set log_level_logfile to 'info' in /etc/salt/minion on galahad"
+    assert 'INFO' in run_galahad("sudo grep '\[INFO *\]' /var/log/salt/minion"), \
+        "You must reset the salt-minion on galahad after setting the value of log_level_logfile"
 
 def test_ag_installed():
-    assert 'ok installed' in run_samwise('dpkg -s silversearcher-ag | grep Status'), \
-        "You must ensure that silversearcher-ag is installed on samwise."
+    assert 'ok installed' in run_galahad('dpkg -s silversearcher-ag | grep Status'), \
+        "You must ensure that silversearcher-ag is installed on galahad."
 
 def test_salt_states_in_vagrant():
-    assert '/vagrant/salt' in run_frodo('grep ^file_roots -A 2 /etc/salt/master'), \
+    assert '/vagrant/salt' in run_arthur('grep ^file_roots -A 2 /etc/salt/master'), \
         "You must set the file_roots:\nbase: to '/vagrant/salt' in /etc/salt/master."
-    assert os.path.exists('frodo_vagrant/salt/ag.sls'), \
+    assert os.path.exists('arthur_vagrant/salt/ag.sls'), \
         "You must put an sls file named ag.sls for silversearcher-ag in {}".format(os.path.abspath('./salt/ag.sls'))
 
 def test_sls_written():
-    with open('frodo_vagrant/salt/ag.sls') as f:
+    with open('arthur_vagrant/salt/ag.sls') as f:
         data = yaml.load(f)
         correct_data = {'install-silversearcher': {'pkg.installed': [{'name': 'silversearcher-ag'}]}}
         assert data == correct_data, \
