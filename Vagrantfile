@@ -2,13 +2,13 @@ Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/trusty64"
   config.vm.box_url = "ubuntu/trusty64"
 
-  config.vm.define :frodo , primary: true do |machine|
+  config.vm.define :arthur , primary: true do |machine|
     machine.vm.provider :virtualbox do |v|
-      v.name = "frodo"
+      v.name = "arthur"
     end
 
-    machine.vm.hostname = "frodo"
-    machine.vm.synced_folder "./frodo_vagrant", "/vagrant", :create => true
+    machine.vm.hostname = "arthur"
+    machine.vm.synced_folder "./arthur_vagrant", "/vagrant", :create => true
 
     machine.vm.network :private_network, ip: "10.10.10.100"
     machine.vm.network :forwarded_port, guest: 80, host: 8001
@@ -16,13 +16,13 @@ Vagrant.configure("2") do |config|
     machine.vm.provision :hostmanager
   end
 
-  config.vm.define :samwise do |machine|
+  config.vm.define :galahad do |machine|
     machine.vm.provider :virtualbox do |v|
-      v.name = "samwise"
+      v.name = "galahad"
     end
 
-    machine.vm.hostname = "samwise"
-    machine.vm.synced_folder "./samwise_vagrant", "/vagrant", :create => true
+    machine.vm.hostname = "galahad"
+    machine.vm.synced_folder "./galahad_vagrant", "/vagrant", :create => true
 
     machine.vm.network :private_network, ip: "10.10.10.101"
     machine.vm.network :forwarded_port, guest: 80, host: 8002
