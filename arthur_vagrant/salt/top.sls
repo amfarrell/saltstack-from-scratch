@@ -1,7 +1,6 @@
 base:
   '*':
     - ag
-  'sir_galahad':
-    - match: grain
+  'sir-*':
     - django
     - nginx
