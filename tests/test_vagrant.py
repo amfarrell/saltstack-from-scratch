@@ -1,8 +1,11 @@
 import subprocess
+import pytest
+from test_utils import run
 
-def run(command):
-    return subprocess.check_output(command, universal_newlines=True)
+setup = pytest.mark.setup
+complete = pytest.mark.complete
 
+@complete
 def test_virtualbox_version():
     """
     Shell out to vboxmanage to get the version of virtualbox currently installed.
@@ -19,6 +22,7 @@ def test_virtualbox_version():
         This may not work with the rest of the tutorial,\n \
         which is written for Virtualbox {}.".format(version, correct_version)
 
+@complete
 def test_vagrant_version():
     correct_version = '1.7.4'
     try:
