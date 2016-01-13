@@ -1,40 +1,7 @@
 import subprocess
 import os
 import re
-
-PROJECT_NAME = 'saltmarsh'
-
-def run(command):
-    try:
-        return subprocess.check_output(command, universal_newlines=True)
-    except subprocess.CalledProcessError as err:
-        return err.output
-
-def run_remote(boxname, command):
-    if not isinstance(command, str):
-        command = ' '.join(command)
-    return run(['vagrant','ssh', boxname, '--command', "{}".format(command)])
-
-def run_frodo(command):
-    return run_remote('frodo', command)
-
-def run_samwise(command):
-    return run_remote('samwise', command)
-
-
-def check_tests_run_from_base_dir():
-    wd = os.getcwd()
-    if os.path.basename(wd) == PROJECT_NAME:
-        return True
-    elif PROJECT_NAME in wd:
-        while not os.path.basename(wd) == 'saltmarsh':
-            wd = os.path.dirname(wd)
-        raise AssertionError("the SaltStack From Scratch tests must be run from {}".format(os.path.abspath(wd)))
-    else:
-         for node, subdirs, files in os.walk('.'):
-             if os.path.basename(node) == 'saltmarsh':
-                 raise AssertionError("the SaltStack From Scratch tests must be run from {}".format(os.path.abspath(node)))
-    raise AssertionError("the SaltStack From Scratch tests must be run from the base directory of their git repository.")
+from test_utils import check_tests_run_from_base_dir, run, run_galahad, run_arthur
 
 def test_virtualbox_version():
     """
@@ -73,15 +40,15 @@ def test_single_box_not_running():
 def test_double_boxes_running():
     check_tests_run_from_base_dir()
     global_status = run(['vagrant', 'global-status'])
-    assert "samwise virtualbox running {}".format(os.getcwd()) in global_status
-    assert "frodo   virtualbox running {}".format(os.getcwd()) in global_status
-    assert os.path.exists('frodo_vagrant')
-    assert os.path.exists('samwise_vagrant')
+    assert "sir-galahad virtualbox running {}".format(os.getcwd()) in global_status
+    assert "arthur  virtualbox running {}".format(os.getcwd()) in global_status
+    assert os.path.exists('arthur_vagrant')
+    assert os.path.exists('galahad_vagrant')
 
 def test_hostmanager_installed():
     plugins = run(['vagrant', 'plugin', 'list'])
     assert 'vagrant-hostmanager' in plugins
 
 def test_samwise_can_ping_frodo():
-    assert 'unknown host' not in run_samwise('ping -c 1 frodo'), \
-        "samwise cannot ping frodo"
+    assert 'unknown host' not in run_galahad('ping -c 1 arthur'), \
+        "arthur cannot ping galahad"
