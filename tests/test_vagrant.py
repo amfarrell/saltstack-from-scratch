@@ -1,9 +1,6 @@
 import subprocess
-import pytest
-from test_utils import run
+from test_utils import run, setup, complete
 
-setup = pytest.mark.setup
-complete = pytest.mark.complete
 
 @complete
 def test_virtualbox_version():
