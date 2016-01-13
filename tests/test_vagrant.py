@@ -1,9 +1,10 @@
 import subprocess
 import pytest
-from test_utils import run
+from test_utils import run, check_tests_run_from_base_dir
 
 setup = pytest.mark.setup
 complete = pytest.mark.complete
+
 
 @setup
 def test_virtualbox_version():
@@ -32,3 +33,18 @@ def test_vagrant_version():
     assert correct_version in version, "Your version of vagrant is {}.\n \
         This may not work with the rest of the tutorial,\n \
         which is written for vagrant {}.".format(version, correct_version)
+
+@complete
+def test_vagrantfile_exists():
+    assert os.path.exists('Vagrantfile'), \
+        "You must create a vagrantfile at {}".format(os.path.abspath('Vagrantfile'))
+
+@complete
+def test_single_box_running():
+    check_tests_run_from_base_dir()
+    global_status = run(['vagrant', 'global-status'])
+    assert "default virtualbox running {}".format(os.getcwd()) in global_status
+
+@complete
+def test_file_created_through_synced_folders():
+    assert os.path.exists('synced-file'), "Log in to the vagrant box and create a directory named 'synced-file within /vagrant"
