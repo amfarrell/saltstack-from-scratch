@@ -1,9 +1,7 @@
 import subprocess
-import pytest
-from test_utils import run, check_tests_run_from_base_dir
+from test_utils import run, check_tests_run_from_base_dir, setup, complete
 
-setup = pytest.mark.setup
-complete = pytest.mark.complete
+
 
 
 @setup

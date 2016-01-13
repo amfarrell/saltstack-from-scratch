@@ -1,6 +1,9 @@
 import subprocess
 import unittest
 import yaml
+import pytest
+setup = pytest.mark.setup
+complete = pytest.mark.complete
 
 PROJECT_NAME = 'saltmarsh'
 
