@@ -1,0 +1,24 @@
+to_be_accepted=("${@}")
+still_unaccepted=()
+
+echo "Loop through the following minion names and keep trying accept each of their keys"
+echo "${to_be_accepted[@]}"
+
+while true; do
+  for i in "${to_be_accepted[@]}"; do
+    salt-key --accept $i -y > /dev/null
+    echo "checking to see if the key from $i has been accepted yet"
+    if [ -z $(salt-key -l accepted | tail -n +2 | grep "$i") ] ; then
+      echo "the key from $i has not yet been accepted"
+      still_unaccepted=("${still_unaccepted[@]}" $i)
+      continue
+    fi
+    echo "salt-master has accepted the key from $i"
+  done
+  if [ "${#still_unaccepted[@]}" = "0" ] ; then
+    echo "All keys have been accepted"
+    break
+  fi
+  to_be_accepted=("${still_unaccepted[@]}")
+  still_unaccepted=()
+done
