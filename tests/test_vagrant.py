@@ -4,8 +4,6 @@ import re
 from test_utils import check_tests_run_from_base_dir, \
     run, run_galahad, run_arthur, setup, complete
 
-PROJECT_NAME = 'saltmarsh'
-
 @setup
 def test_virtualbox_version():
     """
