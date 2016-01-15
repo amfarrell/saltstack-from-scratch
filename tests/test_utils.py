@@ -6,7 +6,7 @@ import pytest
 setup = pytest.mark.setup
 complete = pytest.mark.complete
 
-PROJECT_NAME = 'saltmarsh'
+PROJECT_NAME = 'saltstack-from-scratch'
 
 def run(command):
     try:
