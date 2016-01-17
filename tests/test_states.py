@@ -1,7 +1,9 @@
+from __future__ import absolute_import
+
 import subprocess
 import os
 import re
-from test_utils import run, run_galahad, run_arthur, setup, complete
+from tests.test_utils import run, run_galahad, run_arthur, setup, complete
 
 @complete
 def test_ag_installed_on_galahad():

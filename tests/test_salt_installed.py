@@ -1,7 +1,9 @@
+from __future__ import absolute_import
+
 import subprocess
 import os
 import re
-from test_utils import run, run_galahad, run_arthur, setup, complete
+from tests.test_utils import run, run_galahad, run_arthur, setup, complete
 
 @setup
 def test_salt_installed_running_on_galahad():
