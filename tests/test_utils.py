@@ -1,6 +1,12 @@
 import subprocess
 import unittest
 import yaml
+import os
+import pytest
+setup = pytest.mark.setup
+complete = pytest.mark.complete
+
+PROJECT_NAME = 'saltstack-from-scratch'
 
 def run(command):
     try:
@@ -18,6 +24,21 @@ def run_arthur(command):
 
 def run_galahad(command):
     return run_remote('galahad', command)
+
+def check_tests_run_from_base_dir():
+    wd = os.getcwd()
+    if os.path.basename(wd) == PROJECT_NAME:
+        return True
+    elif PROJECT_NAME in wd:
+        while not os.path.basename(wd) == PROJECT_NAME:
+            wd = os.path.dirname(wd)
+        raise AssertionError("the SaltStack From Scratch tests must be run from {}".format(os.path.abspath(wd)))
+    else:
+         for node, subdirs, files in os.walk('.'):
+             if os.path.basename(node) == PROJECT_NAME:
+                 raise AssertionError("the SaltStack From Scratch tests must be run from {}".format(os.path.abspath(node)))
+    raise AssertionError("the SaltStack From Scratch tests must be run from the base directory of their git repository.")
+
 
 class SaltStateTestCase(unittest.TestCase):
     def run_state(self, state_file, target='*', state_id=None):
