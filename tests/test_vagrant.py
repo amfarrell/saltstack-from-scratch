@@ -7,6 +7,13 @@ from tests.test_utils import check_tests_run_from_base_dir, \
     run, run_galahad, run_arthur, setup, complete
 
 @setup
+def test_start():
+    """
+    Check that the student is in the base directory.
+    """
+    assert check_tests_run_from_base_dir()
+
+@setup
 def test_virtualbox_version():
     """
     Shell out to vboxmanage to get the version of virtualbox currently installed.
