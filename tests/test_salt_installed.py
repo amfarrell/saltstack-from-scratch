@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import subprocess
 import os
 import re
+import yaml
 from tests.test_utils import run, run_galahad, run_arthur, setup, complete
 
 @setup
@@ -62,3 +63,13 @@ def test_arthur_loglevel_set():
         "You must set log_level_logfile to 'info' in /etc/salt/minion on arthur"
     assert 'INFO' in run_arthur("sudo grep '\[INFO *\]' /var/log/salt/minion"), \
         "You must reset the salt-minion on arthur after setting the value of log_level_logfile"
+
+@complete
+def test_arthur_file_roots_set():
+    master_config = yaml.load(run_arthur('cat /etc/salt/master'))
+    assert 'file_roots' in master_config, \
+        "file_roots must be defined in /etc/salt/master"
+    assert 'base' in master_config['file_roots'], \
+        "You must define file_roots in /etc/salt/master to point the salt-master to look in /vagrant/salt/roots/salt for sls files"
+    assert "/vagrant/salt/roots/salt" in master_config['file_roots']['base'], \
+        "You must define file_roots in /etc/salt/master to point the salt-master to look in /vagrant/salt/roots/salt for sls files"
