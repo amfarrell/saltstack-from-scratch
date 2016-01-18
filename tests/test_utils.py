@@ -1,6 +1,10 @@
 import subprocess
 import unittest
 import yaml
+import os
+import pytest
+setup = pytest.mark.setup
+complete = pytest.mark.complete
 
 PROJECT_NAME = 'saltstack-from-scratch'
 
@@ -35,6 +39,7 @@ def check_tests_run_from_base_dir():
                  raise AssertionError("the SaltStack From Scratch tests must be run from {}".format(os.path.abspath(node)))
     raise AssertionError("the SaltStack From Scratch tests must be run from the base directory of their git repository.")
 
+
 class SaltStateTestCase(unittest.TestCase):
     def run_state(self, state_file, target='*', state_id=None):
         if state_id:
@@ -56,7 +61,7 @@ class SaltStateTestCase(unittest.TestCase):
                 continue
             for state_id, results in state_results.items():
                 if results['result'] is not True:
-                    failures.append((minion, state_id, yaml.results))
+                    failures.append((minion, state_id, results))
         if tracebacks:
             message = "The following minions had tracebacks:\n"
             for traceback in tracebacks:
@@ -66,5 +71,6 @@ class SaltStateTestCase(unittest.TestCase):
             message = "The following salt states failed:\n"
             for failure in failures:
                 message += "On {}, the state {} failed with\n {}\n".format(*failure)
+                print(failure[2]['comment'])
             raise AssertionError(message)
         return response_data
