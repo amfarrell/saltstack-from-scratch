@@ -49,14 +49,14 @@ def test_arthur_accepted_minions():
     assert 'arthur' in up_minions, \
         "The salt-master on arthur does not know that the salt-minion on arthur is up"
 
-@complete
+@setup
 def test_galahad_loglevel_set():
     assert "info" in run_galahad('grep ^log_level_logfile /etc/salt/minion'), \
         "You must set log_level_logfile to 'info' in /etc/salt/minion on galahad"
     assert 'INFO' in run_galahad("sudo grep '\[INFO *\]' /var/log/salt/minion"), \
         "You must reset the salt-minion on galahad after setting the value of log_level_logfile"
 
-@complete
+@setup
 def test_arthur_loglevel_set():
     assert "info" in run_arthur('grep ^log_level_logfile /etc/salt/minion'), \
         "You must set log_level_logfile to 'info' in /etc/salt/minion on arthur"

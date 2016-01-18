@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import subprocess
 import os
 import re
+import yaml
 from tests.test_utils import run, run_galahad, run_arthur, setup, complete
 
 @complete
@@ -17,14 +18,14 @@ def test_ag_installed_on_arthur():
 
 @complete
 def test_salt_states_in_vagrant():
-    assert '/vagrant/salt' in run_arthur('grep ^file_roots -A 2 /etc/salt/master'), \
-        "You must set the file_roots:\nbase: to '/vagrant/salt' in /etc/salt/master."
-    assert os.path.exists('arthur_vagrant/salt/ag.sls'), \
-        "You must put an sls file named ag.sls for silversearcher-ag in {}".format(os.path.abspath('./salt/ag.sls'))
+    assert '/vagrant/salt/roots/salt' in run_arthur('grep ^file_roots -A 2 /etc/salt/master'), \
+        "You must set the file_roots:\nbase: to '/vagrant/salt/roots/salt' in /etc/salt/master."
+    assert os.path.exists('arthur_vagrant/salt/roots/salt/ag.sls'), \
+        "You must put an sls file named ag.sls for silversearcher-ag in {}".format(os.path.abspath('./salt/roots/salt/ag.sls'))
 
 @complete
 def test_sls_written():
-    with open('arthur_vagrant/salt/ag.sls') as f:
+    with open('arthur_vagrant/salt/roots/salt/ag.sls') as f:
         data = yaml.load(f)
         correct_data = {'install-silversearcher': {'pkg.installed': [{'name': 'silversearcher-ag'}]}}
         assert data == correct_data, \
