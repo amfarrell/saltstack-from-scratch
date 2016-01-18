@@ -17,14 +17,9 @@ def test_ag_installed_on_arthur():
         "You must ensure that silversearcher-ag is installed on arthur."
 
 @complete
-def test_salt_states_in_vagrant():
-    assert '/vagrant/salt/roots/salt' in run_arthur('grep ^file_roots -A 2 /etc/salt/master'), \
-        "You must set the file_roots:\nbase: to '/vagrant/salt/roots/salt' in /etc/salt/master."
+def test_ag_sls_written():
     assert os.path.exists('arthur_vagrant/salt/roots/salt/ag.sls'), \
         "You must put an sls file named ag.sls for silversearcher-ag in {}".format(os.path.abspath('./salt/roots/salt/ag.sls'))
-
-@complete
-def test_sls_written():
     with open('arthur_vagrant/salt/roots/salt/ag.sls') as f:
         data = yaml.load(f)
         correct_data = {'install-silversearcher': {'pkg.installed': [{'name': 'silversearcher-ag'}]}}
