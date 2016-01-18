@@ -1,0 +1,10 @@
+echo "Check if public key from salt-master exists."
+echo "If not, restart the salt-minion to prompt it to re-send its key to the salt-master"
+
+while true; do
+  if [ -a /etc/salt/pki/minion/minion_master.pub ] ; then
+    break
+  fi
+  service salt-minion restart
+  sleep 1
+done
