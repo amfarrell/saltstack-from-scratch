@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
 
 
       echo \"salt '*' state.sls ag  > /vagrant/enforce-states.log\" > /vagrant/enforce-states
-      echo \"salt '*' state.sls django  > /vagrant/enforce-states.log\" > /vagrant/enforce-states
+      echo \"salt '*' state.sls django  > /vagrant/enforce-states.log\" >> /vagrant/enforce-states
       chmod +x /vagrant/accept-keys
       CALLBACK_SCRIPT='/vagrant/enforce-states' /vagrant/accept-keys #{minion_names} > /vagrant/accept-keys.log &
     "
