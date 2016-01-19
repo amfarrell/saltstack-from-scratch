@@ -34,8 +34,8 @@ Vagrant.configure("2") do |config|
             apt-get update -y
             apt-get install salt-minion salt-master -y
             echo '#{master_name}' > /etc/salt/minion_id
-            cp /vagrant/master /etc/salt/master
-            cp /vagrant/minion /etc/salt/minion
+            cp /vagrant/salt/master /etc/salt/master
+            cp /vagrant/salt/minion /etc/salt/minion
             service salt-master restart
             service salt-minion restart
         "
@@ -53,7 +53,7 @@ Vagrant.configure("2") do |config|
                 apt-get update -y
                 apt-get install salt-minion -y
                 echo '#{hostname}' > /etc/salt/minion_id
-                cp /vagrant/minion /etc/salt/minion
+                cp /vagrant/salt/minion /etc/salt/minion
                 service salt-minion restart
             "
         end
