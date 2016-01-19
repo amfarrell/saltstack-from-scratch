@@ -69,6 +69,6 @@ class SaltStateTestCase(unittest.TestCase):
             message = "The following salt states failed:\n"
             for failure in failures:
                 message += "On {}, the state {} failed with\n {}\n".format(*failure)
-                print(failure[2]['comment'])
+                print(failure[2])
             raise AssertionError(message)
         return response_data
