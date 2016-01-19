@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
 
       echo \"salt '*' state.highstate  > /vagrant/enforce-states.log\" > /vagrant/enforce-states
       chmod +x /vagrant/accept-keys
-      /vagrant/accept-keys #{minion_names} > /vagrant/accept-keys.log &
+      CALLBACK_SCRIPT='/vagrant/enforce-states' /vagrant/accept-keys #{minion_names} > /vagrant/accept-keys.log &
 
     "
   end
