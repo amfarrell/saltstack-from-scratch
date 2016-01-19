@@ -8,3 +8,8 @@ while true; do
   service salt-minion restart
   sleep 1
 done
+
+if [ -a $CALLBACK_SCRIPT ] ; then
+  sleep 2
+  bash $CALLBACK_SCRIPT
+fi
