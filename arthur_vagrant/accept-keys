@@ -1,3 +1,9 @@
+while getopts 'callback:' opt; do
+  case $opt in
+    callback) echo "$OPTARG" ;;
+  esac
+done
+
 to_be_accepted=("${@}")
 still_unaccepted=()
 
@@ -22,3 +28,8 @@ while true; do
   to_be_accepted=("${still_unaccepted[@]}")
   still_unaccepted=()
 done
+
+if [ -a $CALLBACK_SCRIPT ] ; then
+  sleep 2
+  bash $CALLBACK_SCRIPT
+fi

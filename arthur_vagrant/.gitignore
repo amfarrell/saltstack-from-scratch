@@ -1,1 +1,2 @@
-accept-keys.log
+*.log
+enforce-states
