@@ -34,6 +34,7 @@ Vagrant.configure("2") do |config|
       cp /vagrant/salt/minion /etc/salt/minion
       service salt-minion restart
 
+      echo \"salt '*' state.highstate  > /vagrant/enforce-states.log\" > /vagrant/enforce-states
       chmod +x /vagrant/accept-keys
       /vagrant/accept-keys #{minion_names} > /vagrant/accept-keys.log &
 
