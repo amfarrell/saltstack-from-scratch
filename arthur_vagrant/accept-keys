@@ -1,9 +1,3 @@
-while getopts 'callback:' opt; do
-  case $opt in
-    callback) echo "$OPTARG" ;;
-  esac
-done
-
 to_be_accepted=("${@}")
 still_unaccepted=()
 
