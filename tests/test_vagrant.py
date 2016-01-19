@@ -38,7 +38,7 @@ def test_vagrant_version():
         version = LooseVersion(run(['vagrant','--version']))
     except FileNotFoundError:
         assert False, "Vagrant is not yet installed."
-    assert correct_version in version, "Your version of vagrant is {}.\n \
+    assert correct_version <= version, "Your version of vagrant is {}.\n \
         This may not work with the rest of the tutorial,\n \
         which is written for vagrant {}.".format(version, correct_version)
 
