@@ -1,0 +1,6 @@
+file_roots:
+  base:
+    - /vagrant/salt
+pillar_roots:
+  base:
+    - /vagrant/pillar
