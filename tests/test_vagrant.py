@@ -35,7 +35,7 @@ def test_virtualbox_version():
 def test_vagrant_version():
     correct_version = LooseVersion('1.7.4')
     try:
-        version = LooseVersion(run(['vagrant','--version']))
+        version = LooseVersion(re.search('Vagrant ([0-9.]*)\n', run(['vagrant','--version'])).group(1))
     except FileNotFoundError:
         assert False, "Vagrant is not yet installed."
     assert correct_version <= version, "Your version of vagrant is {}.\n \
