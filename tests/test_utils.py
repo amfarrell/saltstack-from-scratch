@@ -44,11 +44,11 @@ class SaltStateTestCase(unittest.TestCase):
     STATES_ROOT = '/vagrant/salt/roots/salt'
     PILLAR_ROOT = '/vagrant/salt/roots/pillar'
 
-    def state_path(sls_name):
-        return os.path.join(STATES_ROOT, sls_name)
+    def state_path(self, sls_name):
+        return os.path.join(self.STATES_ROOT, sls_name)
 
-    def pillar_path(sls_name):
-        return os.path.join(PILLAR_ROOT, sls_name)
+    def pillar_path(self, sls_name):
+        return os.path.join(self.PILLAR_ROOT, sls_name)
 
 
     def run_state(self, state_file, target='*', state_id=None):
