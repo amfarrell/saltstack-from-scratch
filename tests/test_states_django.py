@@ -64,10 +64,10 @@ class TestGalahadDjangoExample(SaltStateTestCase):
 
     def test_nginx_restarts_on_conf_change(self):
         self.run_state(state_file = 'nginx', target='galahad')
-        run_arthur("echo '  ' >> /vagrant/salt/nginx-default.conf")
+        run_arthur("echo '  ' >> {}".format(self.state_path("nginx-default.conf")))
         state_response_data = self.run_state(state_file = 'nginx', target='galahad')
         assert 'restarted' in state_response_data['galahad']['service_|-nginx-running_|-nginx_|-running']['comment']
-        run_arthur("sed -i '$ d' /vagrant/salt/nginx-default.conf")
+        run_arthur("sed -i '$ d' {}".format(self.state_path("nginx-default.conf")))
 
     def test_nginx_proxying_port_8080(self):
         if self.debian_package_installed('nginx'):
@@ -78,4 +78,3 @@ class TestGalahadDjangoExample(SaltStateTestCase):
         assert 'Django' in requests.get('http://0.0.0.0:8002').text
         #TODO
         pass
-
