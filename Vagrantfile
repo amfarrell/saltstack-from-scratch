@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
       service salt-master restart
 
       echo '#{master_vm_name}' > /etc/salt/minion_id
-      if [ -z \"$(grep 'master: arthur' /vagrant/salt/minion)\" ] ; then
+      if [ -z \"$(grep 'master: #{master_vm_name}' /vagrant/salt/minion)\" ] ; then
         echo 'master: #{master_vm_name}' >> /vagrant/salt/minion
       fi
       cp /vagrant/salt/minion /etc/salt/minion
@@ -59,7 +59,7 @@ Vagrant.configure("2") do |config|
       apt-get install salt-minion -y
 
       echo '#{other_vm_name}' > /etc/salt/minion_id
-      if [ -z \"$(grep 'master: arthur' /vagrant/salt/minion)\" ] ; then
+      if [ -z \"$(grep 'master: #{master_vm_name}' /vagrant/salt/minion)\" ] ; then
         echo 'master: #{master_vm_name}' >> /vagrant/salt/minion
       fi
       cp /vagrant/salt/minion /etc/salt/minion
