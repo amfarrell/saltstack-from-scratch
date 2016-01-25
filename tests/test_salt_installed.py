@@ -64,7 +64,7 @@ def test_arthur_loglevel_set():
     assert 'INFO' in run_arthur("sudo grep '\[INFO *\]' /var/log/salt/minion"), \
         "You must reset the salt-minion on arthur after setting the value of log_level_logfile"
 
-@complete
+@setup
 def test_arthur_file_roots_set():
     master_config = yaml.load(run_arthur('cat /etc/salt/master'))
     assert 'file_roots' in master_config, \
