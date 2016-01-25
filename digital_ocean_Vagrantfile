@@ -49,9 +49,7 @@ Vagrant.configure('2') do |config|
         chmod +x /vagrant/accept-keys
         CALLBACK_SCRIPT='/vagrant/enforce-states' /vagrant/accept-keys #{minion_names} > /vagrant/accept-keys.log &
 
-        echo '\n'
-        echo \"#{master_vm_name} set up at http://$(curl http://169.254.169.254/latest/meta-data/public-ipv4 2> /dev/null )/admin\"
-        echo '\n'
+        echo \"\n#{master_vm_name} set up at http://$(curl http://169.254.169.254/metadata/v1/interfaces/public/0/ipv4/address 2> /dev/null )/admin\n\"
     "
   end
 
@@ -82,9 +80,7 @@ Vagrant.configure('2') do |config|
       chmod +x /vagrant/send-key
       /vagrant/send-key > /vagrant/send-key.log &
 
-      echo '\n'
-      echo \"#{other_vm_name} set up at http://$(curl http://169.254.169.254/latest/meta-data/public-ipv4 2> /dev/null )/admin\"
-      echo '\n'
+      echo \"\n#{other_vm_name} set up at http://$(curl http://169.254.169.254/metadata/v1/interfaces/public/0/ipv4/address 2> /dev/null )/admin\n\"
     "
   end
   config.vm.provision :hostmanager
