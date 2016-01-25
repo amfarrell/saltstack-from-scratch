@@ -69,3 +69,8 @@ def test_galahad_can_ping_arthur():
     assert 'Unreachable' not in ping_results, \
         "arthur is not responding to ping"
     assert '1 packets transmitted' in ping_results
+
+@complete
+def test_vagrant_digitalocean_plugin_installed():
+    plugins = run(['vagrant', 'plugin', 'list'])
+    assert 'vagrant-digitalocean' in plugins
