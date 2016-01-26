@@ -1,0 +1,2 @@
+ssh_key_path: '~/.ssh/id_rsa_digital_ocean'
+token: 'XXX'  #Looks lomething like '8736b928aa31043e80546c832203f21b4dd78591c614847a6840b386db19ec77'
