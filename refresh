@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
-from tests.test_utils import run, run_galahad, run_arthur
-import re
+from tests.test_utils import run
 import os
 import shutil
 
-def save_vagrant_dirs():
-    for vagrant_dir in ('arthur_vagrant', 'galahad_vagrant'):
+VM_NAMES = ['arthur', 'galahad']
+VM_SYNCED_DIR_NAMES = ['arthur_vagrant', 'galahad_vagrant']
+
+def reset_vagrant_dirs():
+    for vagrant_dir in VM_SYNCED_DIR_NAMES:
         backup = '{}.bak'.format(vagrant_dir)
         if os.path.exists(vagrant_dir):
             if os.path.exists(backup):
@@ -15,40 +17,14 @@ def save_vagrant_dirs():
         run(['git', 'checkout', vagrant_dir])
 
 def destroy_vms():
-    global_status = run(['vagrant','global-status'])
-
-    regexes = {
-        'arthur': re.compile("([0-9a-fA-F]{7})\s*arthur\s*virtualbox\s*running\s"+"{}".format(os.getcwd())),
-        'galahad': re.compile("([0-9a-fA-F]{7})\s*galahad\s*virtualbox\s*running\s"+"{}".format(os.getcwd())),
-    }
-    ids = []
-    for hostname, regex in regexes.items():
-        match = regex.search(global_status)
-        if match:
-            for group in match.groups():
-                ids.append(group)
-
-    if ids:
-        print(' '.join(['vagrant', 'destroy', '-f'] + ids))
-        print(run(['vagrant', 'destroy', '-f'] + ids))
-
-def configure_salt():
-    run_arthur('cat /vagrant/install-salt.sh | sudo bash >> /vagrant/install.log')
-    run_galahad('cat /vagrant/install-salt.sh | sudo bash >> /vagrant/install.log')
-    run_arthur('sudo salt-key --accept galahad -y')
-    run_arthur('sudo salt-key --accept arthur -y')
-    print(run_arthur('sudo salt-key -L'))
-    print(run_arthur("sudo salt 'galahad' state.single pkg.installed name='silversearcher-ag'"))
+    run(['vagrant', 'destroy'] + VM_NAMES + ['--force'])
 
 def main():
     destroy_vms()
-    save_vagrant_dirs()
-
+    reset_vagrant_dirs()
     print(run(['vagrant', 'up']))
-
-    configure_salt()
+    print(run['./test_setup'])
 
 
 if __name__ == '__main__':
     main()
-    print(run(['py.test', '-v', '--tb=line', 'tests/']))
