@@ -3,6 +3,11 @@
 {% set django_app_name = 'django_example' %}
 {% set gunicorn_service_name = 'django-example' %}
 
+{% set gunicorn_port = 8080 %}
+{% set static_root = django_app_path + '/staticfiles' %}
+{% set static_url = '/static/' %}
+{% set domain = 'localhost' %}
+
 install-git:
   pkg.installed:
   - name: git
@@ -38,6 +43,10 @@ gunicorn-upstart-file:
     django_app_path: {{ django_app_path }}
     virtualenv_path: {{ virtualenv_path }}
     django_app_name: {{ django_app_name }}
+    gunicorn_port: {{ gunicorn_port }}
+    static_root: {{ static_root }}
+    static_url: {{ static_url }}
+    domain: {{ domain }}
 
 gunicorn-running:
   service.running:
@@ -46,3 +55,19 @@ gunicorn-running:
     - file: gunicorn-upstart-file
     - virtualenv: create-virtualenv
 
+static-dir-exists:
+  file.directory:
+  - name: '{{ static_root }}'
+  - clean: True
+  - force: True
+  - dir_mode: 755
+
+collectstatic:
+  cmd.run:
+  - name: '{{ virtualenv_path }}/bin/python {{ django_app_path }}/manage.py collectstatic --noinput --verbosity 3'
+  - env:
+    - 'STATIC_ROOT': '{{ static_root }}'
+    - 'STATIC_URL': '{{ static_url }}'
+  - require:
+    - file: static-dir-exists
+    - virtualenv: create-virtualenv
