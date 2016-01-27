@@ -15,7 +15,7 @@ install-git:
 clone-example-app:
   git.latest:
   - name: https://github.com/amfarrell/django-example
-  - target: /vagrant/django-example
+  - target: {{ django_app_path }}
   - require:
     - pkg: install-git
 
