@@ -30,6 +30,7 @@ Vagrant.configure('2') do |config|
     end
     machine.vm.synced_folder "./#{master_vm_name}_vagrant", "/vagrant", :create => true
 
+    machine.vm.provision :file, source: "./db-pillar.sls", destination: "/vagrant/salt/roots/pillar/db.sls"
     machine.vm.provision :shell, inline: "
         add-apt-repository ppa:saltstack/salt
         apt-get update -y
