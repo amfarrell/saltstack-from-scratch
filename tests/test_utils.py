@@ -2,6 +2,7 @@ import subprocess
 import unittest
 import yaml
 import pytest
+import os
 setup = pytest.mark.setup
 complete = pytest.mark.complete
 
