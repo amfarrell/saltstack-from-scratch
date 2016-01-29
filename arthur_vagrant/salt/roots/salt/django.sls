@@ -45,9 +45,9 @@ gunicorn-upstart-file:
     django_app_name: {{ django_app_name }}
     gunicorn_port: {{ gunicorn_port }}
     env_vars:
-      static_root: {{ static_root }}
-      static_url: {{ static_url }}
-      domain: {{ domain }}
+      STATIC_ROOT: {{ static_root }}
+      STATIC_URL: {{ static_url }}
+      DOMAIN: {{ domain }}
 
 gunicorn-running:
   service.running:
