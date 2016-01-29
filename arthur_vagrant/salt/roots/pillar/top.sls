@@ -1,3 +1,3 @@
 base:
   '*':
-    - ports
+    - db

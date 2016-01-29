@@ -3,6 +3,17 @@
 {% set django_app_name = 'django_example' %}
 {% set gunicorn_service_name = 'django-example' %}
 
+{% set gunicorn_port = 8080 %}
+{% set static_root = django_app_path + '/staticfiles' %}
+{% set static_url = '/static/' %}
+{% set domain = 'localhost' %}
+{% set db_url="postgres://{}:{}@{}:{}/{}".format(
+  pillar['database-user'],
+  pillar['database-password'],
+  pillar['database-host'],
+  pillar['database-port'],
+  pillar['database-name']) %}
+
 install-git:
   pkg.installed:
   - name: git
@@ -38,11 +49,18 @@ gunicorn-upstart-file:
     django_app_path: {{ django_app_path }}
     virtualenv_path: {{ virtualenv_path }}
     django_app_name: {{ django_app_name }}
+    gunicorn_port: {{ gunicorn_port }}
+    env_vars:
+      STATIC_ROOT: {{ static_root }}
+      STATIC_URL: {{ static_url }}
+      DOMAIN: {{ domain }}
+      DB_URL: {{ db_url }}
 
 gunicorn-running:
   service.running:
   - name: {{ gunicorn_service_name }}
   - require:
-    - file: gunicorn-upstart-file
     - virtualenv: create-virtualenv
+  - watch:
+    - file: gunicorn-upstart-file
 

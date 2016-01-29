@@ -19,6 +19,7 @@ Vagrant.configure("2") do |config|
     machine.vm.network :forwarded_port, guest: 8080, host: 8081
     machine.vm.provision :hostmanager
 
+    machine.vm.provision :file, source: "./db-pillar.sls", destination: "/vagrant/salt/roots/pillar/db.sls"
     machine.vm.provision :shell, inline: "
       add-apt-repository ppa:saltstack/salt
       apt-get update -y
