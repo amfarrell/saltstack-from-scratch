@@ -1,7 +1,7 @@
-{% set virtualenv_path = '/vagrant/example-venv' %}
-{% set django_app_path = '/vagrant/django-example' %}
-{% set django_app_name = 'django_example' %}
-{% set gunicorn_service_name = 'django-example' %}
+{% from 'django.sls' import gunicorn_port %}
+{% from 'django.sls' import static_root %}
+{% from 'django.sls' import static_url %}
+{% from 'django.sls' import domain %}
 
 install-nginx:
   pkg.installed:
@@ -20,3 +20,6 @@ nginx-conf-file:
   - template: jinja
   - context:
     gunicorn_port: {{ gunicorn_port }}
+    static_root: {{ static_root }}
+    static_url: {{ static_url }}
+    domain: {{ domain }}

@@ -64,3 +64,19 @@ gunicorn-running:
   - watch:
     - file: gunicorn-upstart-file
 
+static-dir-exists:
+  file.directory:
+  - name: '{{ static_root }}'
+  - clean: True
+  - force: True
+  - dir_mode: 755
+
+collectstatic:
+  cmd.run:
+  - name: '{{ virtualenv_path }}/bin/python {{ django_app_path }}/manage.py collectstatic --noinput --verbosity 3'
+  - env:
+    - 'STATIC_ROOT': '{{ static_root }}'
+    - 'STATIC_URL': '{{ static_url }}'
+  - require:
+    - file: static-dir-exists
+    - virtualenv: create-virtualenv

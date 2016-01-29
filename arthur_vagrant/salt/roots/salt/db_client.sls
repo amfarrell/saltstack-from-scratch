@@ -1,4 +1,6 @@
 {% from 'django.sls' import virtualenv_path %}
+{% from 'django.sls' import django_app_path %}
+{% from 'django.sls' import db_url %}
 
 include:
   - django
@@ -18,10 +20,6 @@ install-psycopg2:
   - upgrade: True
   - require:
     - virtualenv: create-virtualenv
-
-{% from 'django.sls' import django_app_path %}
-{% from 'django.sls' import db_url %}
-#...
 
 run-migrations:
   cmd.run:
