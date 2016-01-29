@@ -18,3 +18,5 @@ nginx-conf-file:
   - name: /etc/nginx/sites-enabled/default
   - source: salt://nginx-default.conf
   - template: jinja
+  - context:
+    gunicorn_port: {{ gunicorn_port }}
