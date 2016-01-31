@@ -36,6 +36,7 @@ create-pg-user:
   - db_user: postgres
   - require:
     - file: hba-conf
+    - service: postgres-running
 
 create-database:
   postgres_database.present:
@@ -45,3 +46,4 @@ create-database:
   - db_user: postgres
   - require:
     - postgres_user: create-pg-user
+    - service: postgres-running
